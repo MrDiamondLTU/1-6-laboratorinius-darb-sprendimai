@@ -13,7 +13,7 @@ xlabel('t');
 ylabel('y(t)');
 title('Funkcijos y(t) = sin(t) grafikas');
 axis([min(t), max(t), min(y_a), max(y_a)]); % Ribos pagal mažiausias ir didžiausias reikšmes
-legend('y(t) = sin(t)', 'Location', 'best');
+legend('y(t) = sin(t)', 'Location', 'northeastoutside'); % Paaiškinimas už grafiko ribų
 grid on;
 
 % --- b ir c dalys ---
@@ -33,11 +33,11 @@ title('Funkcijų y_1(x) ir y_2(x) grafikai');
 all_y = [y1, y2];
 axis([min(x), max(x), min(all_y), max(all_y)]);
 
-legend('y_1(x) = -x^2 + 9', 'y_2(x) = x^3 - 2x^2 - 9', 'Location', 'best');
+legend('y_1(x) = -x^2 + 9', 'y_2(x) = x^3 - 2x^2 - 9', 'Location', 'northeastoutside');
 grid on;
 
 
-% 2. Specializuotų grafikų kūrimas
+%% 2. Specializuotų grafikų kūrimas
 
 % --- a ir b dalys ---
 % Duomenų matrica: 6 studentai (eilutės) ir 4 laboratoriniai darbai (stulpeliai)
@@ -64,17 +64,17 @@ ylim([0 10]);
 legend(student_names, 'Location', 'northeastoutside');
 grid on;
 
-% b) Kiekvieno studento vidurkis diskrečiame formate (stem)
-student_averages = mean(evaluations, 2); % Skaičiuojamas kiekvieno studento vidurkis
+% b) Kiekvieno laboratorinio darbo vidurkis diskrečiame formate (stem)
+ld_averages = mean(evaluations, 1); % Kiekvieno stulpelio (l.d.) vidurkis
 
 subplot(2, 1, 2);
-stem(1:6, student_averages, 'filled', 'LineWidth', 1.5);
-xlabel('Studentas');
+stem(1:4, ld_averages, 'filled', 'LineWidth', 1.5);
+xlabel('l.d.');
 ylabel('Vidurkis');
-title('b) Studentų įvertinimų vidurkiai');
-xlim([0 7]);
+title('b) Laboratorinių darbų įvertinimų vidurkiai');
+xlim([0 5]);
 ylim([0 10]);
-xticks(1:6);
+xticks(1:4);
 grid on;
 %% Papildoma užduotis (7 variantas)
 % Signalų grafinis atvaizdavimas, naudojant 2 lab. d. 3 užduoties signalus
