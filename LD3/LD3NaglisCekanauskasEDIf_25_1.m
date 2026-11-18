@@ -76,86 +76,83 @@ xlim([0 7]);
 ylim([0 10]);
 xticks(1:6);
 grid on;
-%% Papildoma
-%3 Laboratorinis darbas: Papildoma užduotis (7 variantas)
-% Signalų grafinis atvaizdavimas
+%% Papildoma užduotis (7 variantas)
+% Signalų grafinis atvaizdavimas, naudojant 2 lab. d. 3 užduoties signalus
 clc; clear; close all;
 
-%1. Duomenų paruošimas (jei naudojami pavyzdiniai duomenys)
-% Jei turite 2 lab. d. kintamuosius, šią dalį galite pakeisti savaisiais.
-t = linspace(0, 10, 200);                 % Laiko ašis
-U1 = 2;                                   % Apatinė filtravimo riba U1
-U2 = 5;                                   % Viršutinė filtravimo riba U2
+% 1. 2 laboratorinio darbo 3 užduoties duomenys
+A_amp = 6;            % Amplitudė (V)
+f = 2;                % Dažnis (Hz)
+sigma = 1.5;          % Triukšmo lygis (V)
+U1 = 4;               % Įtampos riba U1 (V)
+U2 = 2;               % Įtampos riba U2 (V)
 
-% Pavyzdinis pradinis ir filtruotas signalas:
-u_pradinis = 3 * sin(2*pi*0.2*t) + 3;     % Pradinis signalas
-u_filtruotas = u_pradinis;               % Filtruotas signalas tarp U1 ir U2
-u_filtruotas(u_pradinis < U1 | u_pradinis > U2) = NaN; 
+t = 0:0.005:2;                          % Laiko vektorius
+s = A_amp * cos(2 * pi * f * t);        % Signalas s(t)
+n = sigma * randn(size(t));             % Triukšmas
+u_pradinis = s + n;                     % Pradinis (triukšmo paveiktas) signalas
 
+u_filtruotas = u_pradinis;              % Filtruotas signalas:
+u_filtruotas(abs(u_filtruotas) < U2) = 0;   % |u| < U2 pakeičiama nuliais
 
-%2. Grafinis atvaizdavimas
+% 2. Grafinis atvaizdavimas
 figure('Name', 'Signalų grafinis atvaizdavimas', 'NumberTitle', 'off');
 
 % -------------------------------------------------------------------------
-% a) Pirmasis grafikas: Pradinis ir filtruotas signalai bei ribos U1, U2
+% a) Pradinis ir filtruotas signalai bei filtravimo ribos U1, U2
 % -------------------------------------------------------------------------
 subplot(1, 2, 1); % Horizontalus išdėstymas (1 eilutė, 2 stulpeliai)
 hold on;
 
-% Pradinis signalas
-plot(t, u_pradinis, 'b-', 'LineWidth', 1.5, 'DisplayName', 'Pradinis signalas');
-% Filtruotas signalas
+% Pradinis signalas – ištisinė mėlyna linija
+plot(t, u_pradinis, 'b-', 'LineWidth', 1.2, 'DisplayName', 'Pradinis signalas');
+% Filtruotas signalas – taškinė žalia linija
 plot(t, u_filtruotas, 'g:', 'LineWidth', 2.0, 'DisplayName', 'Filtruotas signalas');
-% Horizontali linija U1 
+% Riba U1
 yline(U1, 'r--', 'LineWidth', 1.2, 'DisplayName', sprintf('Riba U_1 = %.1f V', U1));
-% Horizontali linija U2 
+% Riba U2 – brūkšninė-taškinė linija
 yline(U2, 'm-.', 'LineWidth', 1.2, 'DisplayName', sprintf('Riba U_2 = %.1f V', U2));
 
 hold off;
 
-% Ašių ir grafiko apipavidalinimas
 title('a) Pradinis ir filtruotas signalai');
 xlabel('Laikas t, s', 'FontSize', 13, 'FontWeight', 'bold');
 ylabel('Įtampa U, V', 'FontSize', 13, 'FontWeight', 'bold');
 xlim([min(t), max(t)]);
-ylim([min(u_pradinis)-1, max(u_pradinis)+1]);
+ylim([min(u_pradinis) - 1, max(u_pradinis) + 1]);
 legend('Location', 'southoutside');
 grid on;
+
 % -------------------------------------------------------------------------
-% Antrasis grafikas: Pradinio signalo reikšmės, viršijančios U1 ribą
+% b) Pradinio signalo reikšmės, viršijančios U1 ribą (diskretus formatas)
 % -------------------------------------------------------------------------
-subplot(1, 2, 2); % Horizontalus išdėstymas
+subplot(1, 2, 2);
 
 ind = u_pradinis > U1;
-t_virsh = t(ind);
-u_virsh = u_pradinis(ind);
+t_virs = t(ind);
+u_virs = u_pradinis(ind);
 
 hold on;
+stem(t_virs, u_virs, 'b', 'LineWidth', 1.0, 'DisplayName', 'Reikšmės > U_1');
 
-stem(t_virsh, u_virsh, 'b', 'LineWidth', 1.0, 'DisplayName', 'Reikšmės > U_1');
+% Visos minimalios ir maksimalios reikšmės tarp viršijančių U1
+max_val = max(u_virs);
+min_val = min(u_virs);
+t_max = t_virs(u_virs == max_val);
+t_min = t_virs(u_virs == min_val);
 
-% Surandame minimalias ir maksimalias įtampos reikšmes tarp viršijančių U1
-max_val = max(u_virsh);
-min_val = min(u_virsh);
-
-t_max = t_virsh(u_virsh == max_val);
-t_min = t_virsh(u_virsh == min_val);
-
-% Maksimalių reikšmių žymekliai 
+% Maksimumo žymeklis (dydis 9)
 plot(t_max, max_val * ones(size(t_max)), 'ro', 'MarkerSize', 9, ...
     'MarkerFaceColor', 'r', 'DisplayName', sprintf('Maksimumas (%.2f V)', max_val));
-
-% Minimalių reikšmių žymekliai
+% Minimumo žymeklis
 plot(t_min, min_val * ones(size(t_min)), 'gs', 'MarkerSize', 7, ...
     'MarkerFaceColor', 'g', 'DisplayName', sprintf('Minimumas (%.2f V)', min_val));
-
 hold off;
 
-% Ašių ir grafiko apipavidalinimas
 title('b) Signalo reikšmės, viršijančios U_1 ribą');
 xlabel('Laikas t, s', 'FontSize', 13, 'FontWeight', 'bold');
 ylabel('Įtampa U, V', 'FontSize', 13, 'FontWeight', 'bold');
 xlim([min(t), max(t)]);
-ylim([0, max(u_pradinis)+1]);
+ylim([U1 - 0.5, max_val + 1]);
 legend('Location', 'southoutside');
 grid on;
